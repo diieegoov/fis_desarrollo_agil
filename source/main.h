@@ -19,7 +19,7 @@ void PreOptions() {
   std::cout << "1. Registrarse\n";
   std::cout << "2. Iniciar sesión\n";
   std::cout << "3. Ver información de la aplicación\n";
-  std::cout << "4. Cerrar sesión\n";
+  std::cout << "4. Recuperar contraseña\n";
   std::cout << "0. Salir\n";
 }
 
@@ -28,7 +28,7 @@ void PreOptions() {
 void Menu() {
   int opcion = -1;
   while(opcion != 0) {
-    std::cout << "\n--- MENÚ PRINCIPAL ---\n";
+    std::cout << "--- MENÚ PRINCIPAL ---\n";
     PreOptions();
     std::cout << "--- MENÚ PRINCIPAL ---\n";
     std::cin >> opcion; 
@@ -36,6 +36,12 @@ void Menu() {
       case 1: {
         system("clear");
         SignIn();
+        break;
+      }
+
+      case 4: {
+        system("clear");
+        RecoverPassword();
         break;
       }
 
