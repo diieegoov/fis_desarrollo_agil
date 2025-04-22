@@ -14,7 +14,7 @@ LDFLAGS =						           # The linker options (if any)
 # The all target builds all of the programs handled by the makefile.
 all: platform
 
-platform: source/main.cc source/main.h users/admin.h users/client.h users/user.h
+platform: source/main.cc source/main.h source/functions.h users/admin.h users/client.h users/user.h
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 # Indicate that the all and clean targets do not

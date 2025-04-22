@@ -17,7 +17,7 @@
 class Admin : public Client {
  public:
   Admin() {};  // Constructor por defecto
-  Admin(const std::string& name) : username_(name), role_(true) {}
+  Admin(const std::string& name, const std::string& password) : username_(name), password_(password) {}
 
 
   // Métodos
@@ -35,12 +35,14 @@ class Admin : public Client {
 
   // Getters
   std::string GetUsername() const override { return username_; }
+  std::string GetPassword() const override { return password_; }
   bool GetRole() const override { return role_; }
 
 
  private:
   std::string username_;
-  bool role_;
+  std::string password_;
+  bool role_ = true;
 };
 
 

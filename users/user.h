@@ -17,7 +17,7 @@
 class User : public Client {
  public:
   User() {};  // Constructor por defecto
-  User(const std::string& name) : username_(name), role_(false) {}
+  User(const std::string& name, const std::string& password) : username_(name), password_(password) {}
 
 
   // Métodos
@@ -35,11 +35,13 @@ class User : public Client {
 
   // Getters
   std::string GetUsername() const override { return username_; }
+  std::string GetPassword() const override { return password_; }
   bool GetRole() const override { return role_; }
-
+  
  private:
   std::string username_;
-  bool role_;
+  std::string password_;
+  bool role_ = false;
 };
 
 

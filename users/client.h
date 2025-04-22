@@ -36,9 +36,9 @@ class Client {
 
   // Getters
   virtual std::string GetUsername() const = 0;
+  virtual std::string GetPassword() const = 0;
   virtual bool GetRole() const = 0;  // Usaremos true como admin
-
-  // Setters
+  
 };
 
 
