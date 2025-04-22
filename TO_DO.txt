@@ -1,0 +1,1 @@
+Comprobar la lista de usuarios al hacer SIGNIN --> Nuevo fichero con clients y su rol
