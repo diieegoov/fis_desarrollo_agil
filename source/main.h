@@ -63,6 +63,49 @@ void Info() {
 }
 
 
+void AdminMenu(Client* client) {
+  int option{-1};
+  while (option != 0) {
+    std::cout << "\n--- MENÚ ADMINISTRADOR ---\n";
+    std::cout << "1. Crear proyecto\n";
+    std::cout << "2. Invitar colaboradores\n";
+    std::cout << "3. Editar trabajo\n";
+    std::cout << "4. Guardar trabajo\n";
+    std::cout << "0. Cerrar sesión\n";
+    std::cout << "--- MENÚ ADMINISTRADOR ---\n";
+
+    std::cin >> option;
+    switch (option) {
+      case 0: {
+        system("clear");
+        client->Logout();
+        break;
+      }
+
+      case 1: {
+        system("clear");
+        CrearProyecto();
+        break;
+      }
+
+      case 2: {
+        system("clear");
+        InvitarColab();
+        break;
+      }
+
+      case 3: {
+        system("clear");
+        break;
+      }
+
+      case 4: {
+        system("clear");
+        break;
+      }
+    }
+  }
+}
 
 
 /// @brief Muestra menú sin haberse logeado y sus opciones
@@ -83,12 +126,14 @@ void Menu() {
       case 2: {
         system("clear");
         std::string result = Login();
-        if(result == "0") {
+        if (result == "0") {
           break;
-        }
-        else {
+        } else {
           Client* cliente = BuildClient(result);
           cliente->Login();  // Se llama al login del rol correspondiente
+          if (cliente->GetRole()) {
+            AdminMenu(cliente);
+          }
         }
         break;
       }
@@ -116,14 +161,13 @@ void Menu() {
         break;
       }
 
-      default :
+      default : {
         system("clear");
         PreOptions();
         break;
+      }
     }
   }
-
 }
-
 
 #endif

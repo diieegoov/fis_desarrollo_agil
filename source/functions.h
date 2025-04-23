@@ -341,4 +341,86 @@ std::string Login() {
   return cliente->GetUsername();
 }
 
+
+void Logout(std::string& username) {
+  Client* cliente = BuildClient(username);
+  cliente->Logout();
+}
+
+/// @brief Invita a colaboradores al proyecto
+void InvitarColab() {
+  std::cout << "Lista proyectos: " << std::endl;
+  std::ifstream proyect_list("database/proyect_list");
+  std::string buffer;
+  while (std::getline(proyect_list, buffer)) {
+    std::cout << buffer << std::endl;
+  }
+  std::cout << std::endl;
+
+  std::string proyect_name;
+  bool found{0};
+  while (!found) {
+    std::cout << "Seleccione proyecto: ";
+    std::cin >> proyect_name;
+    if (proyect_name == "QUIT") { return; }
+
+    proyect_list.clear();
+    proyect_list.seekg(0, std::ios::beg);
+    while (std::getline(proyect_list, buffer)) {
+      if (proyect_name == buffer) { found = 1; }
+    }
+
+    if (!found) { std::cout << "El proyecto seleccionado no existe, inténtelo de nuevo. QUIT para salir" << std::endl; }
+  }
+
+  std::string username;
+  std::cout << "Introduzca el nombre del usuario a invitar: ";
+  std::cin >> username;
+
+  if (SearchAlreadyClient(username))  {
+    std::cout << "Seleccione permisos de edición (0: editor, 1: lector): ";
+    int permisos;
+    std::cin >> permisos;
+
+    std::ofstream proyect_data("database/" + proyect_name + "_data");
+    proyect_data << username << " " << permisos << "\n";
+
+    std::cout << "Usuario añadido con éxito al proyecto" << std::endl;
+    return;
+
+  } else {
+    std::cout << "El usuario seleccionado no está dado de alta" << std::endl;
+    return;
+  }
+}
+
+/// @brief Crea un proyecto en la base de datos
+void CrearProyecto() {
+  std::string proyect_name;
+  std::string proyect_path{"database/"};
+  std::cout << "Introduzca el nombre del proyecto a crear: ";
+  std::cin >> proyect_name;
+
+  std::ifstream proyect_list_input("database/proyect_list");
+  std::string buffer;
+  while (std::getline(proyect_list_input, buffer)) {
+    if (buffer == proyect_name) {
+      std::cout << "Ya existe un proyecto con el mismo nombre" << std::endl;
+      return;
+    }
+  }
+  std::ofstream proyect_list_output("database/proyect_list", std::ios::app);
+  proyect_list_output << proyect_name << "\n";
+
+  std::ofstream proyect(proyect_path + proyect_name, std::ios::app);
+  std::ofstream proyect_data(proyect_path + proyect_name + "_data", std::ios::app);
+  if (!proyect.is_open() || !proyect_data.is_open()) {
+    std::cout << "Ha ocurrido un error al crear el proyecto, inténtelo de nuevo más tarde\n" << std::endl;
+  } else {
+    proyect << "";
+    proyect_data << "";
+    std::cout << "Proyecto creado con éxito\n" << std::endl;
+  }
+}
+
 #endif

@@ -27,7 +27,7 @@ class User : public Client {
   }
 
   void Logout() override {
-    // std::cout << "User " << username << " logged out.\n";
+    std::cout << "User " << this->GetUsername() << " logged out.\n";
   }
 
   void Read(std::istream& in) override {
