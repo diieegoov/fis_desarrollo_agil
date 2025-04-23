@@ -23,7 +23,7 @@ class Admin : public Client {
 
   // Métodos
   void Login() override {
-    // std::cout << "Admin " << username << " logged in.\n";
+    std::cout << "Admin " << this->GetUsername() << " logged in.\n";
   }
 
   void Logout() override {

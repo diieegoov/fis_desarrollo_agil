@@ -143,7 +143,9 @@ int SignIn() {
 }
 
 
-
+/// @brief Simulación de email de recuperación de contraseña
+/// @param email email del usuario
+/// @param code codigo que debe recibir e introducir el cliente
 void SendRecoveryEmail(const std::string& email, const std::string& code) {
   std::cout << "Simulando envío de correo a " << email << "...\n";
   std::cout << "------------------------------------------\n";
@@ -153,7 +155,8 @@ void SendRecoveryEmail(const std::string& email, const std::string& code) {
 }
 
 
-
+/// @brief Genera un código aleatorio que el cliente debe introducir
+/// @return codigo aleatorio de 6 dígitos
 std::string GenerateRecoveryCode() {
   std::srand(static_cast<unsigned int>(std::time(nullptr)));
   std::string code;
@@ -164,6 +167,9 @@ std::string GenerateRecoveryCode() {
 }
 
 
+/// @brief Busca el email del cliente cuyo nombre se pasa por parámetro
+/// @param name nombre del cliente del que se extraerá el email
+/// @return string 0 si no se encuentra el usuario, sino el email de este
 std::string EmailClient(std::string name) {
   std::ifstream lista("database/data_user");
   if (!lista.is_open()) {
@@ -187,6 +193,8 @@ std::string EmailClient(std::string name) {
 }
 
 
+/// @brief Usa todas las funciones auxiliares para hacer el proceso de recuperar la contraseña
+/// @return 1 si es intento fallido, 0 si no
 int RecoverPassword() {
   std::string username;
   std::cout << "=== Recuperación de Contraseña ===\n";
@@ -248,6 +256,89 @@ int RecoverPassword() {
 }
 
 
+/// @brief Encuentra y da al usuario su email enlazado a su username
+/// @return 1 si no puede encontrar el username, 0 si sí
+int RecoverEmail() {
+  std::string username;
+  std::cout << "=== Recuperación de Email ===\n";
+  std::cout << "Introduce tu nombre de usuario: ";
+  std::cin >> username;
+  
+  std::string email = EmailClient(username);
+  if(email == "0") {
+    std::cout << "El usuario no existe o no se pudo acceder a la base de datos.\n\n";
+    return 1;
+  }
+  std::cout << "Cliente encontrado. Tu email es: " << email << "\n\n";
+  return 0;
+}
 
+
+Client* BuildClient(std::string name) {
+  std::ifstream lista("database/data_user");
+  // Vamos viendo username por username en la base de datos
+  Client* cliente;
+  std::string linea;
+  while(std::getline(lista, linea)) {
+    std::istringstream iss(linea);
+    std::string username;
+    int rol;
+    std::string password;
+    std::string email;
+    iss >> username >> rol >> password >> email;
+    if(username == name) {
+      if(rol == 1) {
+        cliente = new Admin(name, password, email);
+      }
+      else {
+        cliente = new User(name, password, email);
+      }
+      return cliente;
+    }
+  }
+  return cliente;
+}
+
+
+/// @brief Comprueba el nombre y contraseña por el usuario y hace login con el tipo del objeto
+/// @return string con el nombre del cliente o "0" si hay algún error en el proceso
+std::string Login() {
+  std::string username;
+  std::cout << "=== Iniciar Sesión ===\n";
+  std::cout << "Introduce tu nombre de usuario: ";
+  std::cin >> username;
+  while(!SearchAlreadyClient(username)) {
+    std::cout << "\nUsuario no encontrado. Introduzca un nombre válido\n";
+    std::cout << "También, puede cerrar el proceso introduciendo 'QUIT'.\n";
+    std::cin >> username;
+    if(username == "QUIT") {
+      std::cout << "\n";
+      return "0";
+    }
+  }
+
+  Client* cliente = BuildClient(username);
+
+  std::cout << "\nNombre de usuario válido, introduzca su contraseña: ";
+  std::string password;
+  std::cin >> password;
+  int contador = 3;
+  while(password != cliente->GetPassword()) {
+    if(contador == 0) {
+      std::cout << "Número de intentos agotados. Se cierra el proceso...\n\n";
+      return "0";
+    }
+    std::cout << "Contraseña incorrecta. Introduzca una válida [" << contador << " intentos restantes].\n";
+    std::cout << "También, puede cerrar el proceso introduciendo 'QUIT'.\n";
+    std::cin >> password;
+    if(password == "QUIT") {
+      std::cout << "\n";
+      return "0";
+    }
+    contador--;
+  }
+  std::cout << "Contraseña válida. Iniciando sesión...\n\n";
+  return cliente->GetUsername();
+}
 
 #endif

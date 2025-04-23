@@ -1,3 +1,4 @@
-Inicio de sesion y su menú post inicio 
+menú post inicio de sesión de usuarios 
+(Cierre de sesion, su menú y opciones, diferencias de usuaris a admins)
 
-Informacion de la aplicacion
+Guardar, editar y crear trabajo como clientes

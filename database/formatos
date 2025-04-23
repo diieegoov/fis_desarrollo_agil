@@ -1,4 +1,4 @@
 formato data_user:
-username rol(0 user, 1admin) contraseña
-Antonio 0 hola
-Juan 1 Nosoyjuan.
+username rol(0 user, 1 admin) contraseña email
+Antonio 0 hola anto@gmail.com
+Juan 1 Nosoyjuan. juani@gmail.com

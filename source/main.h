@@ -19,9 +19,50 @@ void PreOptions() {
   std::cout << "1. Registrarse\n";
   std::cout << "2. Iniciar sesión\n";
   std::cout << "3. Ver información de la aplicación\n";
-  std::cout << "4. Recuperar contraseña\n";
+  std::cout << "4. Recuperar correo\n";
+  std::cout << "5. Recuperar contraseña\n";
   std::cout << "0. Salir\n";
 }
+
+
+/// @brief Imprime la información de la aplicación
+void Info() {
+    std::cout << "╔══════════════════════════════════════════════════════════════╗\n";
+    std::cout << "║                 🚀 BIENVENIDO A NOTACOLLAB 🚀                ║\n";
+    std::cout << "╠══════════════════════════════════════════════════════════════╣\n";
+    std::cout << "║ 🌐  Tu espacio de trabajo TODO-EN-UNO                        ║\n";
+    std::cout << "║      para equipos creativos y organizados                    ║\n";
+    std::cout << "╚══════════════════════════════════════════════════════════════╝\n\n";
+
+    std::cout << "📌 FUNCIONALIDADES DESTACADAS:\n";
+    std::cout << "   ┌────────────────────────────────────────────────────┐\n";
+    std::cout << "   │ 📝 Notas colaborativas en tiempo real              │\n";
+    std::cout << "   │ ✅ Gestión de tareas con tableros Kanban           │\n";
+    std::cout << "   │ 📅 Calendarios integrados con alertas              │\n";
+    std::cout << "   │ 🗂️  Bases de datos flexibles y personalizables      │\n";
+    std::cout << "   │ 🔗 Integración con correo, Google Calendar y más   │\n";
+    std::cout << "   │ 🧠 Wikis y documentación organizadas por proyectos │\n";
+    std::cout << "   └────────────────────────────────────────────────────┘\n\n";
+
+    std::cout << "👥 PARA EQUIPOS COMO:\n";
+    std::cout << "   📌 Desarrolladores        📌 Diseñadores\n";
+    std::cout << "   📌 Equipos de marketing   📌 Estudiantes\n\n";
+
+    std::cout << "✨ VENTAJAS DE USAR NOTACOLLAB:\n";
+    std::cout << "   🔄 Sincronización en tiempo real\n";
+    std::cout << "   🧩 Interfaz modular y 100% personalizable\n";
+    std::cout << "   💡 Mejora la productividad y organización\n";
+    std::cout << "   📊 Todo tu trabajo en un solo lugar\n\n";
+
+    std::cout << "💬 \"Organiza tu caos creativo con estilo.\"\n";
+    std::cout << "🛠️  ¡Transforma ideas en acción desde un solo panel!\n";
+
+    std::cout << "\n📎 Visítanos: https://www.notacollab.app\n";
+    std::cout << "📬 Contacto: soporte@notacollab.app\n";
+    std::cout << "════════════════════════════════════════════════════════════════\n\n";
+}
+
+
 
 
 /// @brief Muestra menú sin haberse logeado y sus opciones
@@ -39,13 +80,36 @@ void Menu() {
         break;
       }
 
+      case 2: {
+        system("clear");
+        std::string result = Login();
+        if(result == "0") {
+          break;
+        }
+        else {
+          Client* cliente = BuildClient(result);
+          cliente->Login();  // Se llama al login del rol correspondiente
+        }
+        break;
+      }
+
+      case 3: {
+        system("clear");
+        Info();
+        break;
+      }
+
       case 4: {
+        system("clear");
+        RecoverEmail();
+        break;
+      }
+
+      case 5: {
         system("clear");
         RecoverPassword();
         break;
       }
-
-
 
       case 0: {
         std::cout << "Saliendo del programa...\n";
