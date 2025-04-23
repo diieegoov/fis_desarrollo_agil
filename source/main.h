@@ -69,8 +69,7 @@ void AdminMenu(Client* client) {
     std::cout << "\n--- MENÚ ADMINISTRADOR ---\n";
     std::cout << "1. Crear proyecto\n";
     std::cout << "2. Invitar colaboradores\n";
-    std::cout << "3. Editar trabajo\n";
-    std::cout << "4. Guardar trabajo\n";
+    std::cout << "3. Acceder a proyecto\n";
     std::cout << "0. Cerrar sesión\n";
     std::cout << "--- MENÚ ADMINISTRADOR ---\n";
 
@@ -84,7 +83,7 @@ void AdminMenu(Client* client) {
 
       case 1: {
         system("clear");
-        CrearProyecto();
+        CrearProyecto(client);
         break;
       }
 
@@ -96,11 +95,33 @@ void AdminMenu(Client* client) {
 
       case 3: {
         system("clear");
+        AccederProyecto(client);
+        break;
+      }
+    }
+  }
+}
+
+
+void UserMenu(Client* client) {
+  int option{-1};
+  while (option != 0) {
+    std::cout << "\n--- MENÚ USUARIO ---\n";
+    std::cout << "1. Acceder a proyecto\n";
+    std::cout << "0. Cerrar sesión\n";
+    std::cout << "--- MENÚ USUARIO ---\n";
+
+    std::cin >> option;
+    switch (option) {
+      case 0: {
+        system("clear");
+        client->Logout();
         break;
       }
 
-      case 4: {
+      case 1: {
         system("clear");
+        AccederProyecto(client);
         break;
       }
     }
@@ -133,6 +154,8 @@ void Menu() {
           cliente->Login();  // Se llama al login del rol correspondiente
           if (cliente->GetRole()) {
             AdminMenu(cliente);
+          } else {
+            UserMenu(cliente);
           }
         }
         break;
