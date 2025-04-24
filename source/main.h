@@ -89,7 +89,7 @@ void AdminMenu(Client* client) {
 
       case 2: {
         system("clear");
-        InvitarColab();
+        InvitarColab(client);
         break;
       }
 

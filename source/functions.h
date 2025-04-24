@@ -348,31 +348,43 @@ void Logout(std::string& username) {
 }
 
 /// @brief Invita a colaboradores al proyecto
-void InvitarColab() {
-  std::cout << "Lista proyectos: " << std::endl;
+void InvitarColab(Client* client) {
   std::ifstream project_list("database/project_list");
-  std::string buffer;
-  while (std::getline(project_list, buffer)) {
-    std::cout << buffer << std::endl;
-  }
-  std::cout << std::endl;
-
   std::string project_name;
-  bool found{0};
-  while (!found) {
-    std::cout << "Seleccione proyecto: ";
-    std::cin >> project_name;
-    if (project_name == "QUIT") { return; }
+  std::string buffer;
+  std::string allowed_projects;
 
-    project_list.clear();
-    project_list.seekg(0, std::ios::beg);
-    while (std::getline(project_list, buffer)) {
-      if (project_name == buffer) { found = 1; }
+  std::cout << "Lista de proyectos:" << std::endl;
+  while (std::getline(project_list, project_name)) {
+    std::ifstream project_data{"database/" + project_name + "_data"};
+    while (std::getline(project_data, buffer)) {
+      if (buffer.substr(0, buffer.find(" ")) == client->GetUsername()) {
+        allowed_projects += project_name + " ";
+        std::cout << project_name << std::endl;
+      }
     }
-
-    if (!found) { std::cout << "El proyecto seleccionado no existe, inténtelo de nuevo. QUIT para salir" << std::endl; }
+    project_data.close();
   }
   project_list.close();
+
+  size_t pos{allowed_projects.find(" ")};
+  std::string selection;
+  bool allowed{0};
+
+  while (!allowed) {
+    std::cout << "\nSeleccione proyecto: ";
+    std::cin >> selection;
+
+    if (selection == "QUIT") { return; }
+    while (pos != std::string::npos) {
+      if (allowed_projects.substr(0, pos) == selection) {
+        allowed = 1;
+        break;
+      }
+      pos = allowed_projects.find(" ", ++pos);
+    }
+    if (!allowed) { std::cout << "El proyecto seleccionado no existe o no tiene acceso al mismo, inténtelo de nuevo. QUIT para salir" << std::endl; }
+  }
 
   std::string username;
   std::cout << "Introduzca el nombre del usuario a invitar: ";
@@ -383,7 +395,7 @@ void InvitarColab() {
     int permisos;
     std::cin >> permisos;
 
-    std::ofstream project_data("database/" + project_name + "_data", std::ios::app);
+    std::ofstream project_data("database/" + selection + "_data", std::ios::app);
     project_data << username << " " << permisos << "\n";
     project_data.close();
 
