@@ -14,8 +14,12 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include <string>
+#include <algorithm> 
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 class Client {
  public:
@@ -27,6 +31,8 @@ class Client {
 
   // Sobrecargas
   virtual void Read(std::istream& in) = 0;
+
+  virtual void Tasks() = 0;
 
   // Sobrecarga del operador >>
   friend std::istream& operator>>(std::istream& in, Client& client) {

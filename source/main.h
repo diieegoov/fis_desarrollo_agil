@@ -70,6 +70,7 @@ void AdminMenu(Client* client) {
     std::cout << "1. Crear proyecto\n";
     std::cout << "2. Invitar colaboradores\n";
     std::cout << "3. Acceder a proyecto\n";
+    std::cout << "4. Tareas\n";
     std::cout << "0. Cerrar sesión\n";
     std::cout << "--- MENÚ ADMINISTRADOR ---\n";
 
@@ -98,6 +99,12 @@ void AdminMenu(Client* client) {
         AccederProyecto(client);
         break;
       }
+
+      case 4: {
+        system("clear");
+        client->Tasks();
+        break;
+      }
     }
   }
 }
@@ -108,6 +115,7 @@ void UserMenu(Client* client) {
   while (option != 0) {
     std::cout << "\n--- MENÚ USUARIO ---\n";
     std::cout << "1. Acceder a proyecto\n";
+    std::cout << "2. Tareas\n";
     std::cout << "0. Cerrar sesión\n";
     std::cout << "--- MENÚ USUARIO ---\n";
 
@@ -122,6 +130,12 @@ void UserMenu(Client* client) {
       case 1: {
         system("clear");
         AccederProyecto(client);
+        break;
+      }
+
+      case 2: {
+        system("clear");
+        client->Tasks();
         break;
       }
     }

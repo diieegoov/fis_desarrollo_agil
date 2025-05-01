@@ -3,9 +3,23 @@ username rol(0 user, 1 admin) contraseña email
 Antonio 0 hola anto@gmail.com
 Juan 1 Nosoyjuan. juani@gmail.com
 
-formato proyect_list:
+formato project_list:
 proyecto1
 proyecto2
 
 formato nombre_proyecto_data:
 username rol(0: editor, 1: lector)
+
+
+
+
+formato tasks:
+username 
+[0] task
+[1] task
+-
+another_username
+[0] task
+[1] task
+-
+

@@ -2,3 +2,5 @@ menú post inicio de sesión de usuarios
 (Cierre de sesion, su menú y opciones, diferencias de usuaris a admins)
 
 Guardar, editar y crear trabajo como clientes
+
+Sistema de mensajes entre usuarios
