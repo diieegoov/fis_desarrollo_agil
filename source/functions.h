@@ -301,7 +301,7 @@ Client* BuildClient(std::string name) {
 
 
 /// @brief Comprueba el nombre y contraseña por el usuario y hace login con el tipo del objeto
-/// @return string con el nombre del cliente o "0" si hay algún error en el proceso
+/// @return String con el nombre del cliente o "0" si hay algún error en el proceso
 std::string Login() {
   std::string username;
   std::cout << "=== Iniciar Sesión ===\n";
@@ -347,12 +347,15 @@ void Logout(std::string& username) {
   cliente->Logout();
 }
 
-/// @brief Invita a colaboradores al proyecto
-void InvitarColab(Client* client) {
-  std::ifstream project_list("database/project_list");
+
+/// @brief Pide al usuario que seleccione un proyecto del que tiene acceso
+/// @param client Puntero a cliente
+/// @return Pair con un bool que indica si está permitido el acceso y un string con la selección del usuario
+std::pair<bool, std::string> SelProyecto(Client* client) {
+  std::ifstream project_list{"database/project_list"};
   std::string project_name;
-  std::string buffer;
   std::string allowed_projects;
+  std::string buffer;
 
   std::cout << "Lista de proyectos:" << std::endl;
   while (std::getline(project_list, project_name)) {
@@ -367,15 +370,14 @@ void InvitarColab(Client* client) {
   }
   project_list.close();
 
-  size_t pos{allowed_projects.find(" ")};
   std::string selection;
   bool allowed{0};
-
+  size_t pos{allowed_projects.find(" ")};
   while (!allowed) {
     std::cout << "\nSeleccione proyecto: ";
     std::cin >> selection;
 
-    if (selection == "QUIT") { return; }
+    if (selection == "QUIT") { return std::pair<bool, std::string>(); }
     while (pos != std::string::npos) {
       if (allowed_projects.substr(0, pos) == selection) {
         allowed = 1;
@@ -385,7 +387,14 @@ void InvitarColab(Client* client) {
     }
     if (!allowed) { std::cout << "El proyecto seleccionado no existe o no tiene acceso al mismo, inténtelo de nuevo. QUIT para salir" << std::endl; }
   }
+  return std::pair(allowed, selection);
+}
 
+
+/// @brief Invita a colaboradores al proyecto
+/// @param client Puntero a cliente
+void InvitarColab(Client* client) {
+  std::pair<bool, std::string> aux(SelProyecto(client));
   std::string username;
   std::cout << "Introduzca el nombre del usuario a invitar: ";
   std::cin >> username;
@@ -395,7 +404,7 @@ void InvitarColab(Client* client) {
     int permisos;
     std::cin >> permisos;
 
-    std::ofstream project_data("database/" + selection + "_data", std::ios::app);
+    std::ofstream project_data("database/" + aux.second + "_data", std::ios::app);
     project_data << username << " " << permisos << "\n";
     project_data.close();
 
@@ -408,7 +417,9 @@ void InvitarColab(Client* client) {
   }
 }
 
+
 /// @brief Crea un proyecto en la base de datos
+/// @param client Puntero a cliente
 void CrearProyecto(Client* client) {
   std::string project_name;
   std::string project_path{"database/"};
@@ -431,58 +442,31 @@ void CrearProyecto(Client* client) {
 
   std::ofstream project(project_path + project_name, std::ios::app);
   std::ofstream project_data(project_path + project_name + "_data", std::ios::app);
-  if (!project.is_open() || !project_data.is_open()) {
+  std::ofstream project_comments(project_path + project_name + "_comments", std::ios::app);
+  if (!project.is_open() || !project_data.is_open() || !project_comments.is_open()) {
     std::cout << "Ha ocurrido un error al crear el proyecto, inténtelo de nuevo más tarde\n" << std::endl;
   } else {
     project << "";
     project_data << client->GetUsername() << " " << "0\n";
+    project_comments << "";
     std::cout << "Proyecto creado con éxito\n" << std::endl;
     project.close();
     project_data.close();
+    project_comments.close();
   }
 }
 
 
+/// @brief Accede a un proyecto en la base de datos
+/// @param client Puntero a cliente
 void AccederProyecto(Client* client) {
-  std::ifstream project_list{"database/project_list"};
-  std::string project_name;
-  std::string allowed_projects;
-  std::string buffer;
-
-  std::cout << "Lista de proyectos:" << std::endl;
-  while (std::getline(project_list, project_name)) {
-    std::ifstream project_data{"database/" + project_name + "_data"};
-    while (std::getline(project_data, buffer)) {
-      if (buffer.substr(0, buffer.find(" ")) == client->GetUsername()) {
-        allowed_projects += project_name + " ";
-        std::cout << project_name << std::endl;
-      }
-    }
-    project_data.close();
-  }
-  project_list.close();
-
-  std::cout << "\nSeleccione un proyecto: ";
-  std::string selection;
-  std::cin >> selection;
-
-  bool allowed{0};
-  size_t pos{allowed_projects.find(" ")};
-  while (pos != std::string::npos) {
-    if (allowed_projects.substr(0, pos) == selection) {
-      allowed = 1;
-      break;
-    }
-    pos = allowed_projects.find(" ", ++pos);
-  }
-
-  if (!allowed) {
-    std::cout << "El proyecto seleccionado no existe o no tiene acceso al mismo" << std::endl;
-  } else {
+  std::pair<bool, std::string> aux(SelProyecto(client));
+  if (aux.first) {
     std::cout << "Accediendo al proyecto";
 
     std::string privileges;
-    std::ifstream selection_data{"database/" + selection + "_data"};
+    std::string buffer;
+    std::ifstream selection_data{"database/" + aux.second + "_data"};
     while (std::getline(selection_data, buffer)) {
       if (buffer.substr(0, buffer.find(" ")) == client->GetUsername()) {
         privileges = buffer.substr(buffer.find(" ") + 1);
@@ -492,14 +476,87 @@ void AccederProyecto(Client* client) {
 
     if (privileges == "0") {
       std::cout << " con privilegios de escritura..." << std::endl;
-      std::string command{"vim database/" + selection};
+      std::string command{"vim database/" + aux.second};
       system(command.c_str());
     } else {
       std::cout << " con privilegios de lectura..." << std::endl;
       std::cout << "Contenido proyecto:" << std::endl;
-      std::string command{"cat database/" + selection};
+      std::string command{"cat database/" + aux.second};
       system(command.c_str());
       std::cout << std::endl;
+    }
+  }
+}
+
+
+/// @brief Administra los comentarios de un proyecto
+/// @param client Puntero a cliente
+void ComentarProyecto(Client* client) {
+  std::pair<bool, std::string> aux(SelProyecto(client)); 
+  if (aux.first) {
+    std::cout << "Comentario a enviar: ";
+    std::string comment;
+    std::getline(std::cin >> std::ws, comment);
+
+    std::ofstream project_comments{"database/" + aux.second + "_comments", std::ios::app};
+    project_comments << client->GetUsername() << ": " << comment << std::endl;
+    project_comments.close();
+
+    std::cout << "Comentario enviado con éxito" << std::endl;
+  }
+}
+
+/// @brief Permite leer los comentarios guardados de un proyecto
+/// @param client Puntero a cliente
+void LeerComentarios(Client* client) {
+  std::pair<bool, std::string> aux(SelProyecto(client)); 
+  if (aux.first) {
+    std::ifstream project_comments("database/" + aux.second + "_comments");
+    std::string buffer;
+    while (std::getline(project_comments, buffer)) {
+      std::cout << buffer << std::endl;
+    }
+    project_comments.close();
+  }
+}
+
+
+/// @brief Permite clonar un proyecto existente del que se tiene acceso
+/// @param client Puntero a cliente
+void ClonarProyecto(Client* client) {
+  std::pair<bool, std::string> aux(SelProyecto(client)); 
+  if (aux.first) {
+    std::string command{"cp database/" + aux.second + " database/" + aux.second + "_copy"};
+    system(command.c_str());
+
+    command = "cp database/" + aux.second + "_data database/" + aux.second + "_data_copy";
+    system(command.c_str());
+
+    command = "cp database/" + aux.second + "_comments database/" + aux.second + "_comments_copy";
+    system(command.c_str());
+
+    std::ofstream project_list("database/project_list", std::ios::app);
+    project_list << aux.second << "_copy\n";
+    project_list.close();
+
+    std::cout << "Proyecto clonado con éxito" << std::endl;
+  }
+}
+
+
+/// @brief Muestra un resumen del progreso
+/// @param client Puntero a cliente
+void ResumenProgreso(Client* client) {
+  std::pair<bool, std::string> aux(SelProyecto(client)); 
+  if (aux.first) {
+    std::ifstream tasks{"database/tasks"};
+    if (tasks.peek() == std::ifstream::traits_type::eof()) {
+      std::cout << "No hay datos suficientes para mostrar" << std::endl;
+      return;
+    }
+    std::string buffer;
+    while (std::getline(tasks, buffer)) {
+      std::cout << buffer;
     }
   }
 }

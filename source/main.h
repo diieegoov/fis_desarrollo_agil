@@ -63,6 +63,8 @@ void Info() {
 }
 
 
+/// @brief Muestra menú del usuario logeado
+/// @param client Puntero a cliente
 void AdminMenu(Client* client) {
   int option{-1};
   while (option != 0) {
@@ -71,6 +73,10 @@ void AdminMenu(Client* client) {
     std::cout << "2. Invitar colaboradores\n";
     std::cout << "3. Acceder a proyecto\n";
     std::cout << "4. Tareas\n";
+    std::cout << "5. Agregar comentarios\n";
+    std::cout << "6. Leer comentarios\n";
+    std::cout << "7. Clonar proyecto\n";
+    std::cout << "8. Resumen progreso\n";
     std::cout << "0. Cerrar sesión\n";
     std::cout << "--- MENÚ ADMINISTRADOR ---\n";
 
@@ -105,17 +111,46 @@ void AdminMenu(Client* client) {
         client->Tasks();
         break;
       }
+
+      case 5: {
+        system("clear");
+        ComentarProyecto(client);
+        break;
+      }
+
+      case 6: {
+        system("clear");
+        LeerComentarios(client);
+        break;
+      }
+
+      case 7: {
+        system("clear");
+        ClonarProyecto(client);
+        break;
+      }
+
+      case 8: {
+        system("clear");
+        ResumenProgreso(client);
+        break;
+      }
     }
   }
 }
 
 
+/// @brief Muestra menú del usuario logeado
+/// @param client Puntero a cliente
 void UserMenu(Client* client) {
   int option{-1};
   while (option != 0) {
     std::cout << "\n--- MENÚ USUARIO ---\n";
     std::cout << "1. Acceder a proyecto\n";
     std::cout << "2. Tareas\n";
+    std::cout << "3. Agregar comentarios\n";
+    std::cout << "4. Leer comentarios\n";
+    std::cout << "5. Clonar proyecto\n";
     std::cout << "0. Cerrar sesión\n";
     std::cout << "--- MENÚ USUARIO ---\n";
 
@@ -136,6 +171,24 @@ void UserMenu(Client* client) {
       case 2: {
         system("clear");
         client->Tasks();
+        break;
+      }
+
+      case 3: {
+        system("clear");
+        ComentarProyecto(client);
+        break;
+      }
+
+      case 4: {
+        system("clear");
+        LeerComentarios(client);
+        break;
+      }
+
+      case 5: {
+        system("clear");
+        ClonarProyecto(client);
         break;
       }
     }

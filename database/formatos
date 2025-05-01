@@ -10,7 +10,8 @@ proyecto2
 formato nombre_proyecto_data:
 username rol(0: editor, 1: lector)
 
-
+formato nombre_proyecto_comments:
+username: comentario
 
 
 formato tasks:
@@ -22,4 +23,3 @@ another_username
 [0] task
 [1] task
 -
-
